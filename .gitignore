@@ -1,0 +1,25 @@
+# Python environment -- 1.5 GB, rebuilt from requirements.txt
+.venv-win/
+.venv/
+__pycache__/
+*.pyc
+
+# Judgment corpus -- 2.8 GB, and deliberately NOT redistributed here.
+#
+# Three separate reasons:
+#   1. Individual year tars run 100-430 MB; GitHub rejects any file over 100 MB.
+#   2. The judgments come from a CC-BY-4.0 dataset. Re-publishing a copy would
+#      make this repo a redistributor with its own attribution obligations,
+#      when it only needs to be a consumer.
+#   3. It is all reproducible: `escr_ingest.py` fetches it, and the manifest
+#      records exactly which years and file hashes were used.
+data/
+
+# Streamlit's static-serving scratch area
+static/
+
+# Local editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

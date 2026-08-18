@@ -1,0 +1,9 @@
+# "Court paper" theme. Setting these here makes Streamlit's own chrome -- menus,
+# tooltips, slider tracks, date pickers -- render light natively, instead of the
+# app fighting a dark default with CSS overrides.
+[theme]
+base = "light"
+primaryColor = "#2f5d3f"
+backgroundColor = "#faf7f1"
+secondaryBackgroundColor = "#f2ece0"
+textColor = "#23211c"

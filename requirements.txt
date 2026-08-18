@@ -1,0 +1,11 @@
+# Tested with Python 3.11.9 on Windows
+# Versions match the working GeM portal environment.
+huggingface-hub==1.27.0
+pandas==3.0.5
+pyarrow==24.0.0
+# Judgment texts arrive as PDFs inside the per-year tars.
+PyMuPDF==1.28.0
+requests==2.34.2
+streamlit==1.60.0
+chromadb==1.5.9
+sentence-transformers==5.6.1
