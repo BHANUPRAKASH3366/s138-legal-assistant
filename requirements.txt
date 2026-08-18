@@ -1,5 +1,4 @@
 # Tested with Python 3.11.9 on Windows
-# Versions match the working GeM portal environment.
 huggingface-hub==1.27.0
 pandas==3.0.5
 pyarrow==24.0.0
