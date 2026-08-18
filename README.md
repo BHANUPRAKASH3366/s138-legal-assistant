@@ -66,33 +66,42 @@ the Negotiable Instruments Act by the 1988 amendment and came into force on
 The corpus is **not** in this repository (see `.gitignore`) — it is several GB of
 third-party CC-BY data, and every byte of it is reproducible from `escr_ingest.py`.
 
-## Setup
+## Setup after cloning
+
+**The judgment corpus is not in this repository, so a fresh clone cannot search
+anything until you build it.** This is deliberate — the judgments are several GB
+of third-party CC-BY data, the per-year archives exceed GitHub's 100 MB file
+limit, and every byte is reproducible from the Supreme Court's published records.
+
+Three commands:
 
 ```powershell
 py -3.11 -m venv .venv-win
 .\.venv-win\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv-win\Scripts\python.exe setup_corpus.py
 ```
 
-Fetch metadata for all in-scope years (small, fast):
+`setup_corpus.py` downloads the judgments, filters them to Section 138, and
+builds the search index. It defaults to 2020-2025 (about 1.7 GB, 20-40 minutes)
+so you get something working quickly. Every stage is resumable — if it is
+interrupted, run it again and it continues from where it stopped.
+
+For the full range, or a specific one:
 
 ```powershell
-.\.venv-win\Scripts\python.exe escr_ingest.py --metadata-only
+.\.venv-win\Scripts\python.exe setup_corpus.py --full                    # 1989-2025, ~10 GB
+.\.venv-win\Scripts\python.exe setup_corpus.py --from-year 2015 --to-year 2025
 ```
 
-Then fetch judgment texts. The full 1989-2025 range is roughly 10 GB; a recent
-slice is enough to try it out:
+Then start the app:
 
 ```powershell
-.\.venv-win\Scripts\python.exe escr_ingest.py --from-year 2015 --to-year 2025
-```
-
-Build the filtered corpus, embed it, and run the app:
-
-```powershell
-.\.venv-win\Scripts\python.exe build_corpus.py
-.\.venv-win\Scripts\python.exe embed_corpus.py
 .\.venv-win\Scripts\python.exe -m streamlit run app.py
 ```
+
+Coverage note: s.138 came into force on 1 April 1989, and the Supreme Court's
+first judgments on it appear in the mid-1990s — 1989-1992 genuinely contain
+none, so a wider range is not automatically a richer corpus.
 
 ## Known limitations
 

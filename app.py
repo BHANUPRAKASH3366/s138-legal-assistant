@@ -118,6 +118,8 @@ chroma_path = st.sidebar.text_input("Chroma path", str(DEFAULT_CHROMA_PATH))
 collection_name = st.sidebar.text_input("Collection", DEFAULT_COLLECTION)
 
 retriever = None
+texts: dict[str, str] = {}
+corpus_error: Exception | None = None
 try:
     retriever = get_retriever(chroma_path, collection_name)
     count = retriever.collection.count()
@@ -125,9 +127,37 @@ try:
     texts = load_full_texts()
     st.sidebar.write(f"**Judgments:** `{len(texts):,}`")
 except Exception as error:
-    st.sidebar.error(f"Corpus not available: {error}")
-    st.sidebar.caption("Run `build_corpus.py` then `embed_corpus.py`.")
-    texts = {}
+    corpus_error = error
+    st.sidebar.error("Corpus not built yet")
+
+# A fresh clone has no corpus: the judgments are several GB of third-party
+# CC-BY data and are not in the repository. Say so in the main area and stop,
+# rather than rendering a search box that cannot answer anything.
+if retriever is None:
+    st.error("### The judgment corpus has not been built on this machine yet")
+    st.markdown(
+        "This is expected after cloning the repository. The Supreme Court judgments are **not** "
+        "stored in git — they are several GB of third-party CC-BY data, the per-year archives are "
+        "larger than GitHub's 100 MB file limit, and all of it is reproducible from the Court's "
+        "published records.\n\n"
+        "**Build it with one command** (about 1.7 GB, 20-40 minutes on a normal connection):"
+    )
+    st.code("python setup_corpus.py", language="powershell")
+    st.markdown(
+        "That downloads the judgments, filters them to Section 138, and builds the search index. "
+        "It is resumable — if it is interrupted, run it again and it continues where it stopped.\n\n"
+        "For the full 1989-2025 range instead (about 10 GB):"
+    )
+    st.code("python setup_corpus.py --full", language="powershell")
+    with st.expander("Run the three stages separately"):
+        st.code(
+            "python escr_ingest.py --from-year 2020 --to-year 2025   # download judgments\n"
+            "python build_corpus.py                                  # filter to s.138 and chunk\n"
+            "python embed_corpus.py                                  # build the search index",
+            language="powershell",
+        )
+        st.caption(f"Underlying error: {corpus_error}")
+    st.stop()
 
 st.sidebar.markdown("---")
 result_limit = st.sidebar.slider("Passages to retrieve", 3, 20, 8)
